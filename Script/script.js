@@ -5,6 +5,71 @@ let b = '';
 let op = '';
 let memory = 0;
 let resultUsed = false;
+let lastOperator = '';
+let lastOperand = '';
+
+document.addEventListener('keydown', function (event)
+{
+    const key = event.key;
+    if (isNumberKey(key))
+    {
+        appendToDisplay(key);
+    }
+    else if (isOperatorKey(key))
+    {
+        handleOperator(key);
+    }
+    else if (key === 'Enter' || key === '=')
+    {
+        calculate();
+    }
+    else if (key === 'Backspace')
+    {
+        backspace();
+    }
+    else if (key === 'Escape' || key === 'Delete')
+    {
+        clearDisplay();
+    }
+    else if (key === '%')
+    {
+        percentage();
+    }
+    else if (key === 'r')
+    {
+        reciprocal();
+    }
+    else if (key === 's')
+    {
+        square();
+    }
+    else if (key === 'S')
+    {
+        squareRoot();
+    }
+    else if (key === 'm')
+    {
+        toggleSign();
+    }
+});
+
+function isNumberKey(key)
+{
+    return /\d/.test(key) || key === '.';
+}
+
+function isOperatorKey(key)
+{
+    return key === '+' || key === '-' || key === '*' || key === '/' || key === '×' || key === '÷';
+}
+
+function handleOperator(key)
+{
+    let operator = key;
+    if (key === '*') operator = '×';
+    if (key === '/') operator = '÷';
+    appendToDisplay(operator);
+}
 
 function appendToDisplay(value)
 {
@@ -64,10 +129,7 @@ function calculate()
                 {
                     display.value = 'Error';
                     expression.value = b + ' ' + op + ' ' + a + ' = Error';
-                    a = '';
-                    b = '';
-                    op = '';
-                    resultUsed = true;
+                    resetAfterError();
                     return;
                 }
                 c = x / y;
@@ -75,11 +137,29 @@ function calculate()
         }
         display.value = c;
         expression.value = b + ' ' + op + ' ' + a + ' = ' + c;
+        lastOperator = op;
+        lastOperand = a;
+
         a = c.toString();
         b = '';
         op = '';
         resultUsed = true;
     }
+    else if (resultUsed && lastOperator !== '' && lastOperand !== '')
+    {
+        b = display.value;
+        a = lastOperand;
+        op = lastOperator;
+        calculate();
+    }
+}
+
+function resetAfterError()
+{
+    a = '';
+    b = '';
+    op = '';
+    resultUsed = true;
 }
 
 function clearDisplay()
@@ -90,12 +170,13 @@ function clearDisplay()
     display.value = '';
     expression.value = '';
     resultUsed = false;
+    lastOperator = '';
+    lastOperand = '';
 }
 
 function backspace()
 {
-    if (a !== '')
-    {
+    if (a !== '') {
         a = a.slice(0, -1);
         display.value = a;
         expression.value = b + ' ' + op + ' ' + a;

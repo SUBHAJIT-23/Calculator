@@ -35,7 +35,7 @@ document.addEventListener('keydown', function (event)
     {
         percentage();
     }
-    else if (key === 'r')
+    else if (key === 'i')
     {
         reciprocal();
     }
@@ -43,7 +43,7 @@ document.addEventListener('keydown', function (event)
     {
         square();
     }
-    else if (key === 'S')
+    else if (key === 'r')
     {
         squareRoot();
     }
